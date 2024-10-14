@@ -15,10 +15,9 @@ app.get("/", (req, res) => {
   res.send("Hello from yelpcamp!");
 });
 
-app.get("/makecampground", async (req, res) => {
-  const camp = new Campground({ title: "My Backyard", description: "cheap" });
-  await camp.save();
-  res.send(camp);
+app.get("/campgrounds", async (req, res) => {
+  const campgrounds = await Campground.find({});
+  res.json({ data: campgrounds, message: "success", status: 200 });
 });
 
 app.listen(3000, () => {
