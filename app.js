@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+app.use(express.json());
 const mongoose = require("mongoose");
 const Campground = require("./models/campground");
 
@@ -18,6 +19,11 @@ app.get("/", (req, res) => {
 app.get("/campgrounds", async (req, res) => {
   const campgrounds = await Campground.find({});
   res.json({ data: campgrounds, message: "success", status: 200 });
+});
+
+app.get("/campgrounds/:id", async (req, res) => {
+  const camp = await Campground.findById(req.params.id);
+  res.json({ data: camp, message: "success", status: 200 });
 });
 
 app.listen(3000, () => {
