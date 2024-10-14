@@ -26,6 +26,12 @@ app.get("/campgrounds/:id", async (req, res) => {
   res.json({ data: camp, message: "success", status: 200 });
 });
 
+app.post("/campgrounds", async (req, res) => {
+  const camp = new Campground(req.body);
+  await camp.save();
+  res.json({ data: camp, message: "success", status: 200 });
+});
+
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
