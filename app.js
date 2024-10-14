@@ -40,6 +40,11 @@ app.put("/campgrounds/:id", async (req, res) => {
   res.json({ data: camp, message: "success", status: 200 });
 });
 
+app.delete("/campgrounds/:id", async (req, res) => {
+  const camp = await Campground.findByIdAndDelete(req.params.id);
+  res.json({ data: camp, message: "success", status: 200 });
+});
+
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
