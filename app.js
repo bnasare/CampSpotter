@@ -74,7 +74,7 @@ app.delete(
   "/campgrounds/:id",
   catchAsync(async (req, res) => {
     const camp = await Campground.findByIdAndDelete(req.params.id);
-    res.json({ data: camp, message: "success", status: 200 });
+    res.json({ message: "success", status: 200 });
   })
 );
 
@@ -88,6 +88,17 @@ app.post(
     await camp.save();
     await review.save();
     res.json({ data: camp, message: "success", status: 200 });
+  })
+);
+
+app.delete(
+  "/campgrounds/:id/reviews/:reviewId",
+  catchAsync(async (req, res) => {
+    await Campground.findByIdAndUpdate(req.params.id, {
+      $pull: { reviews: req.params.reviewId },
+    });
+    await Review.findByIdAndDelete(req.params.reviewId);
+    res.json({ message: "success", status: 200 });
   })
 );
 
