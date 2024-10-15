@@ -5,14 +5,6 @@ const { places, descriptors } = require("./seedHelpers");
 
 mongoose.connect("mongodb://localhost:27017/yelp-camp");
 
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-  console.log("Database connected");
-});
-
-const sample = (array) => array[Math.floor(Math.random() * array.length)];
-
 const loremIpsum = (length) => {
   const words = [
     "lorem",
@@ -30,6 +22,14 @@ const loremIpsum = (length) => {
   }
   return text.trim();
 };
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", () => {
+  console.log("Database connected");
+});
+
+const sample = (array) => array[Math.floor(Math.random() * array.length)];
 
 const seedDB = async () => {
   await Campground.deleteMany({});
