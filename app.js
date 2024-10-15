@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const Campground = require("./models/campground");
 const catchAsync = require("./utils/catchAsync");
 const ExpressError = require("./utils/ExpressError");
+const campgroundSchema = require("./schema");
 
 mongoose.connect("mongodb://localhost:27017/yelp-camp");
 
