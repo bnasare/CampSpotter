@@ -11,7 +11,7 @@ mongoose.connect("mongodb://localhost:27017/yelp-camp");
 const validateCampground = (req, res, next) => {
   const { error } = campgroundSchema.validate(req.body);
   if (error) {
-    const msg = error.details.map((el) => el.message).join(",");
+    const msg = error.details.map((err) => err.message).join(",");
     throw new ExpressError(msg, 400);
   } else {
     next();
