@@ -6,6 +6,7 @@ const Campground = require("./models/campground");
 const catchAsync = require("./utils/catchAsync");
 const ExpressError = require("./utils/ExpressError");
 const { campgroundSchema } = require("./schema");
+const Review = require("./models/review");
 
 mongoose.connect("mongodb://localhost:27017/yelp-camp");
 
@@ -38,7 +39,7 @@ app.get(
 );
 
 app.get("/campgrounds/:id", async (req, res) => {
-  const camp = await Campground.findById(req.params.id);
+  const camp = await Campground.findById(req.params.id).populate("reviews");
   res.json({ data: camp, message: "success", status: 200 });
 });
 
@@ -68,6 +69,18 @@ app.delete(
   "/campgrounds/:id",
   catchAsync(async (req, res) => {
     const camp = await Campground.findByIdAndDelete(req.params.id);
+    res.json({ data: camp, message: "success", status: 200 });
+  })
+);
+
+app.post(
+  "/campgrounds/:id/reviews",
+  catchAsync(async (req, res) => {
+    const camp = await Campground.findById(req.params.id);
+    const review = new Review(req.body);
+    camp.reviews.push(review);
+    await camp.save();
+    await review.save();
     res.json({ data: camp, message: "success", status: 200 });
   })
 );
