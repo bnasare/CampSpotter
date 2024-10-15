@@ -5,14 +5,14 @@ const mongoose = require("mongoose");
 const Campground = require("./models/campground");
 const catchAsync = require("./utils/catchAsync");
 const ExpressError = require("./utils/ExpressError");
-const campgroundSchema = require("./schema");
+const { campgroundSchema } = require("./schema");
 
 mongoose.connect("mongodb://localhost:27017/yelp-camp");
 
 const validateCampground = (req, res, next) => {
   const { error } = campgroundSchema.validate(req.body);
   if (error) {
-    const msg = error.details.map((err) => err.message).join(",");
+    const msg = error.details.map((el) => el.message).join(",");
     throw new ExpressError(msg, 400);
   } else {
     next();
@@ -79,7 +79,12 @@ app.all("*", (req, res, next) => {
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "Oh No, Something Went Wrong!";
-  res.status(statusCode).render("error", { err });
+  res.status(statusCode).json({
+    error: {
+      message: err.message,
+      status: statusCode,
+    },
+  });
 });
 
 app.listen(3000, () => {
