@@ -3,6 +3,9 @@ const mongoose = require("mongoose");
 const ExpressError = require("./utils/ExpressError");
 const campgroundRoutes = require("./routes/campgrounds");
 const reviewRoutes = require("./routes/reviews");
+const session = require("express-session");
+const cookie = require("express-session/session/cookie");
+const flash = require("connect-flash");
 
 // Initialize Express app
 const app = express();
@@ -15,8 +18,20 @@ db.once("open", () => {
   console.log("Database connected");
 });
 
+const sessionConfig = {
+  secret: "thissession",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  },
+};
 // Middleware
 app.use(express.json());
+app.use(session(sessionConfig));
+app.use(flash());
 
 // Routes
 app.use("/campgrounds", campgroundRoutes);
