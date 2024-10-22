@@ -4,8 +4,10 @@ const ExpressError = require("./utils/ExpressError");
 const campgroundRoutes = require("./routes/campgrounds");
 const reviewRoutes = require("./routes/reviews");
 const session = require("express-session");
-const cookie = require("express-session/session/cookie");
 const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user");
 
 // Initialize Express app
 const app = express();
@@ -32,10 +34,21 @@ const sessionConfig = {
 app.use(express.json());
 app.use(session(sessionConfig));
 app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // Routes
 app.use("/campgrounds", campgroundRoutes);
 app.use("/campgrounds/:id/reviews", reviewRoutes);
+
+app.get("/fakeUser", async (req, res) => {
+  const user = new User({ email: "bankoo@gmail.com", username: "bankoo" });
+  const newUser = await User.register(user, "kanosangho");
+  res.json(newUser, { message: "success", status: 200 });
+});
 
 app.get("/", (req, res) => {
   res.send("Hello from yelpcamp!");
