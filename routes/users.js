@@ -23,17 +23,24 @@ const validateUser = validateSchema(userSchema);
 router.post(
   "/register",
   validateUser,
-  catchAsync(async (req, res) => {
+  catchAsync(async (req, res, next) => {
     const { email, username, password } = req.body;
     const user = new User({ email, username });
     const registeredUser = await User.register(user, password);
-    res.status(201).json({
-      message: "User registered successfully",
-      user: {
-        id: registeredUser._id,
-        username: registeredUser.username,
-        email: registeredUser.email,
-      },
+    req.login(registeredUser, (err) => {
+      if (err) {
+        return next(
+          new ExpressError("Failed to log in after registration", 500)
+        );
+      }
+      res.status(201).json({
+        message: "User registered successfully",
+        user: {
+          id: registeredUser._id,
+          username: registeredUser.username,
+          email: registeredUser.email,
+        },
+      });
     });
   })
 );
