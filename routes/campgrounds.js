@@ -19,7 +19,7 @@ router.get(
   "/:id",
   catchAsync(async (req, res) => {
     const camp = await Campground.findById(req.params.id)
-      .populate("reviews")
+      .populate({ path: "reviews", populate: { path: "author" } })
       .populate("author");
     res.json({ data: camp, message: "success", status: 200 });
   })
