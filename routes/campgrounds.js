@@ -2,21 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Campground = require("../models/campground");
 const catchAsync = require("../utils/catchAsync");
-const ExpressError = require("../utils/ExpressError");
 const { campgroundSchema } = require("../schema");
-const { isLoggedIn } = require("../middleware");
-
-const validateSchema = (schema) => {
-  return (req, res, next) => {
-    const { error } = schema.validate(req.body);
-    if (error) {
-      const msg = error.details.map((el) => el.message).join(",");
-      throw new ExpressError(msg, 400);
-    } else {
-      next();
-    }
-  };
-};
+const { isLoggedIn, isAuthor, validateSchema } = require("../middleware");
 
 const validateCampground = validateSchema(campgroundSchema);
 
@@ -53,13 +40,10 @@ router.post(
 router.put(
   "/:id",
   isLoggedIn,
+  isAuthor,
   validateCampground,
   catchAsync(async (req, res) => {
     const { id } = req.params;
-    const camp = await Campground.findById(id);
-    if (!camp.author.equals(req.user._id)) {
-      throw new ExpressError("You are not allowed to do that", 400);
-    }
     const updatedCamp = await Campground.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
@@ -71,12 +55,9 @@ router.put(
 router.delete(
   "/:id",
   isLoggedIn,
+  isAuthor,
   catchAsync(async (req, res) => {
     const { id } = req.params;
-    const camp = await Campground.findById(id);
-    if (!camp.author.equals(req.user._id)) {
-      throw new ExpressError("You are not allowed to do that", 400);
-    }
     await Campground.findByIdAndDelete(id);
     res.json({ message: "success", status: 200 });
   })

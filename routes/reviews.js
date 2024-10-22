@@ -5,18 +5,7 @@ const catchAsync = require("../utils/catchAsync");
 const ExpressError = require("../utils/ExpressError");
 const { reviewSchema } = require("../schema");
 const Review = require("../models/review");
-
-const validateSchema = (schema) => {
-  return (req, res, next) => {
-    const { error } = schema.validate(req.body);
-    if (error) {
-      const msg = error.details.map((el) => el.message).join(",");
-      throw new ExpressError(msg, 400);
-    } else {
-      next();
-    }
-  };
-};
+const { isLoggedIn, isAuthor, validateSchema } = require("../middleware");
 
 const validateReview = validateSchema(reviewSchema);
 
