@@ -55,11 +55,16 @@ router.put(
   isLoggedIn,
   validateCampground,
   catchAsync(async (req, res) => {
-    const camp = await Campground.findByIdAndUpdate(req.params.id, req.body, {
+    const { id } = req.params;
+    const camp = await Campground.findById(id);
+    if (!camp.author.equals(req.user._id)) {
+      throw new ExpressError("You are not allowed to do that", 400);
+    }
+    const updatedCamp = await Campground.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
     });
-    res.json({ data: camp, message: "success", status: 200 });
+    res.json({ data: updatedCamp, message: "success", status: 200 });
   })
 );
 
@@ -67,7 +72,12 @@ router.delete(
   "/:id",
   isLoggedIn,
   catchAsync(async (req, res) => {
-    await Campground.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
+    const camp = await Campground.findById(id);
+    if (!camp.author.equals(req.user._id)) {
+      throw new ExpressError("You are not allowed to do that", 400);
+    }
+    await Campground.findByIdAndDelete(id);
     res.json({ message: "success", status: 200 });
   })
 );
