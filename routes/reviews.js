@@ -11,10 +11,12 @@ const validateReview = validateSchema(reviewSchema);
 
 router.post(
   "/",
+  isLoggedIn,
   validateReview,
   catchAsync(async (req, res) => {
     const camp = await Campground.findById(req.params.id);
     const review = new Review(req.body);
+    review.author = req.user._id;
     camp.reviews.push(review);
     await camp.save();
     await review.save();
