@@ -57,10 +57,10 @@ app.all("*", (req, res, next) => {
 
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
-  if (!err.message) err.message = "Oh No, Something Went Wrong!";
+  const message = err.message || "Internal Server Error";
   res.status(statusCode).json({
     error: {
-      message: err.message,
+      message,
       status: statusCode,
     },
   });
