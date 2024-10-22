@@ -31,7 +31,9 @@ router.get(
 router.get(
   "/:id",
   catchAsync(async (req, res) => {
-    const camp = await Campground.findById(req.params.id).populate("reviews");
+    const camp = await Campground.findById(req.params.id)
+      .populate("reviews")
+      .populate("author");
     res.json({ data: camp, message: "success", status: 200 });
   })
 );
@@ -42,6 +44,7 @@ router.post(
   validateCampground,
   catchAsync(async (req, res, next) => {
     const camp = new Campground(req.body);
+    camp.author = req.user._id;
     await camp.save();
     res.json({ data: camp, message: "success", status: 200 });
   })
