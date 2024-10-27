@@ -21,6 +21,7 @@ db.once("open", () => {
   console.log("Database connected");
 });
 
+// Session configuration
 const sessionConfig = {
   secret: "thissession",
   resave: false,
@@ -31,18 +32,20 @@ const sessionConfig = {
     maxAge: 1000 * 60 * 60 * 24 * 7,
   },
 };
+
 // Middleware
 app.use(express.json());
 app.use(session(sessionConfig));
 app.use(flash());
+
+// Passport configuration
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(
-  new LocalStrategy({ usernameField: "email" }, User.authenticate())
-);
+passport.use(new LocalStrategy({ usernameField: "email" }, User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// Home route
 app.get("/", (req, res) => {
   res.send("Hello from yelpcamp!");
 });
@@ -52,11 +55,12 @@ app.use("/", userRoutes);
 app.use("/campgrounds", campgroundRoutes);
 app.use("/campgrounds/:id/reviews", reviewRoutes);
 
-// Error handling
+// Error handling for 404 Not Found
 app.all("*", (req, res, next) => {
   next(new ExpressError("Page Not Found", 404));
 });
 
+// Global error handler
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   const message = err.message || "Internal Server Error";
