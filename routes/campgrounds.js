@@ -17,6 +17,7 @@ router.get("/:id", catchAsync(campgrounds.showCampground));
 router.post(
   "/",
   isLoggedIn,
+  upload.array("image"),
   validateCampground,
   catchAsync(campgrounds.createCampground)
 );

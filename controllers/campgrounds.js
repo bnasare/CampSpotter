@@ -6,6 +6,11 @@ module.exports.index = async (req, res) => {
 };
 
 module.exports.createCampground = async (req, res) => {
+  const imagePromises = req.files.map(async (file) => ({
+    url: file.path,
+    filename: file.filename,
+  }));
+  req.body.images = await Promise.all(imagePromises);
   const camp = new Campground(req.body);
   camp.author = req.user._id;
   await camp.save();
@@ -33,4 +38,3 @@ module.exports.deleteCampground = async (req, res) => {
   const deletedCamp = await Campground.findByIdAndDelete(id);
   res.json({ data: deletedCamp, message: "success", status: 200 });
 };
-
