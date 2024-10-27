@@ -1,3 +1,9 @@
+// Load environment variables
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
+// Dependencies
 const express = require("express");
 const mongoose = require("mongoose");
 const ExpressError = require("./utils/ExpressError");
@@ -41,7 +47,9 @@ app.use(flash());
 // Passport configuration
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy({ usernameField: "email" }, User.authenticate()));
+passport.use(
+  new LocalStrategy({ usernameField: "email" }, User.authenticate())
+);
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
