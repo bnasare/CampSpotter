@@ -7,7 +7,7 @@ const userRoutes = require("./routes/users");
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
-const LocalStrategy = require("passport-local");
+const LocalStrategy = require("passport-local").Strategy;
 const User = require("./models/user");
 
 // Initialize Express app
@@ -37,7 +37,9 @@ app.use(session(sessionConfig));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
+passport.use(
+  new LocalStrategy({ usernameField: "email" }, User.authenticate())
+);
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
