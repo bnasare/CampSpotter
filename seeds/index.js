@@ -42,6 +42,16 @@ const seedDB = async () => {
       location: `${cities[random1000].city}, ${cities[random1000].state}`,
       price: price,
       description: loremIpsum(20),
+      images: [
+        {
+          url: "https://www.nps.gov/grte/planyourvisit/images/JLCG_tents_Teewinot_2008_mattson_1.JPG?maxwidth=1300&maxheight=1300&autorotate=false",
+          filename: "YelpCamp/rdqjyqgjyj1q1jgqj7qk",
+        },
+        {
+          url: "https://assets.simpleviewinc.com/simpleview/image/upload/c_limit,h_1200,q_75,w_1200/v1/clients/visitflorida/PHOTO_20ICON_20CAMPING_20FISHEATING_20CREEK_20_28Peter_20W_20Cross_20and_20Patrick_20Farrell_29_7da735c6-5d2b-4d1d-934d-fd7ab901cbc9.jpg",
+          filename: "YelpCamp/rdqjyqgjyj1q1jgqj7qk",
+        },
+      ],
     });
     await camp.save();
   }

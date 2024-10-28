@@ -26,10 +26,19 @@ module.exports.showCampground = async (req, res) => {
 
 module.exports.updateCampground = async (req, res) => {
   const { id } = req.params;
-  const updatedCamp = await Campground.findByIdAndUpdate(id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  const imagePromises = req.files.map(async (file) => ({
+    url: file.path,
+    filename: file.filename,
+  }));
+  const newImages = await Promise.all(imagePromises);
+  const updatedCamp = await Campground.findByIdAndUpdate(
+    id,
+    { ...req.body, $push: { images: { $each: newImages } } },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
   res.json({ data: updatedCamp, message: "success", status: 200 });
 };
 
