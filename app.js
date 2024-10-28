@@ -15,6 +15,8 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const User = require("./models/user");
+const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
 
 // Initialize Express app
 const app = express();
@@ -43,6 +45,8 @@ const sessionConfig = {
 app.use(express.json());
 app.use(session(sessionConfig));
 app.use(flash());
+app.use(mongoSanitize());
+app.use(helmet());
 
 // Passport configuration
 app.use(passport.initialize());
