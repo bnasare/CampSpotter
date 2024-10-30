@@ -18,7 +18,8 @@ const User = require("./models/user");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const MongoDBStore = require("connect-mongo");
-const dbUrl = "mongodb://localhost:27017/yelp-camp" || process.env.DB_URL;
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/yelp-camp";
+const secret = process.env.SECRET || "thissession";
 
 // Initialize Express app
 const app = express();
@@ -34,7 +35,7 @@ db.once("open", () => {
 // Create a session store using connect-mongo
 const store = new MongoDBStore({
   mongoUrl: dbUrl,
-  secret: process.env.SECRET || "thissession",
+  secret,
   touchAfter: 24 * 60 * 60,
 });
 
@@ -47,7 +48,7 @@ store.on("error", function (e) {
 const sessionConfig = {
   store,
   name: "session",
-  secret: process.env.SECRET || "thissession",
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -101,6 +102,8 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
