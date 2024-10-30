@@ -34,7 +34,7 @@ db.once("open", () => {
 // Create a session store using connect-mongo
 const store = new MongoDBStore({
   mongoUrl: dbUrl,
-  secret: "thissession",
+  secret: process.env.SECRET || "thissession",
   touchAfter: 24 * 60 * 60,
 });
 
